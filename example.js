@@ -24,7 +24,7 @@ class exampleQuiz {
 	 * Performs a check to see whether readline has been initialised
 	 */
 	init() {
-		this.quizzer.start()
+		return this.quizzer.start()
 	}
 
 	stageAgain() {
@@ -39,7 +39,7 @@ class exampleQuiz {
 	}
 
 	stageFinal() {
-		console.log(`Hello, ${this.name}!\nToday you want to:\n${this.tasks}`)
+		this.quizzer.end()
 	}
 
 	stageName() {
@@ -61,3 +61,6 @@ class exampleQuiz {
 
 quiz = new exampleQuiz()
 quiz.init()
+	.then(() => {
+		console.log(`Hello, ${quiz.name}!\nToday you want to:\n${quiz.tasks}`)
+	})

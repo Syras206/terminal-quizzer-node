@@ -2,6 +2,8 @@ class quizzer {
 
 	// The question class instance used for asking questions.
 	questionClass = null
+	quizReject = null
+	quizResolve = null
 
 	/**
 	 * Creates a new quizzer instance.
@@ -10,6 +12,11 @@ class quizzer {
 	 */
 	constructor(questionClass) {
 		this.questionClass = questionClass
+	}
+
+	end() {
+		// resolve the quiz promise, so any scripts using this quiz know that the quiz is complete
+		this.quizResolve()
 	}
 
 	/**
@@ -33,10 +40,15 @@ class quizzer {
 	 * Starts the quiz by running the first stage.
 	 */
 	start() {
-		// Get the first item in the stages array
-		let firstStage = Object.keys(this.questionClass.stages)[0]
-		// Run the first stage
-		this.runStage(firstStage)
+		return new Promise((resolve, reject) => {
+			this.quizResolve = resolve;
+			this.quizReject = reject;
+
+			// Get the first item in the stages array
+			let firstStage = Object.keys(this.questionClass.stages)[0]
+			// Run the first stage
+			this.runStage(firstStage)
+		})
 	}
 
 }
