@@ -2,7 +2,7 @@
   "name": "terminal-quizzer",
   "version": "1.0.0",
   "description": "A promise based node package for outputting user prompt questions and quizzes within the console.",
-  "main": "example.js",
+  "main": "exports.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
