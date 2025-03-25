@@ -1,4 +1,5 @@
 const readline = require('readline')
+const Table = require("./UI/table");
 
 class Questioner {
 
@@ -18,7 +19,7 @@ class Questioner {
 	 * a promise that resolves with the user's input.
 	 *
 	 * @param {string} question - The question to ask the user.
-	 * @param {string} [colour=this.GREEN] - The color to use for the question text. Defaults to green.
+	 * @param {string} [colour=this.GREEN] - The colour to use for the question text. Defaults to green.
 	 * @returns {Promise<string>} A promise that resolves with the user's input.
 	 *
 	 * @example
@@ -46,7 +47,7 @@ class Questioner {
 	 *
 	 * @param {string} question - The question to ask the user.
 	 * @param {string} responsePrefix [responsePrefix=this.defaultResponsePrefix]
-	 * @param {string} [colour=this.GREEN] - The color to use for the question text. Defaults to green.
+	 * @param {string} [colour=this.GREEN] - The colour to use for the question text. Defaults to green.
 	 * @returns {Promise<string>} A promise that resolves with the user's input.
 	 *
 	 * @example
@@ -152,6 +153,159 @@ class Questioner {
 			input: process.stdin,
 			output: process.stdout
 		})
+	}
+
+	/**
+	 * Displays a menu to the user and returns a promise that resolves with the user's selection
+	 * @param {string} question
+	 * @param {object} options
+	 * @param {string|null} title
+	 * @param {string} colour
+	 *
+	 * @public
+	 */
+	showMenu(question, options, title = null, colour = this.GREEN) {
+		// store the instance as self so we can access it within the promise
+		let self = this
+		let selectedOptionId = 0
+
+		const optionsMap = () => {
+			return Object.entries(options).map(([key, value]) => ({
+				'key': key,
+				'name': value
+			}))
+		}
+
+		const renderOptions = (i = 0) => {
+			console.clear()
+			if (title?.length > 0) {
+				console.log(`${title}${this.NORMAL}\n`);
+			}
+
+			// log out the question to the user
+			console.log(`${colour}${question}${this.NORMAL}\n`);
+			optionsMap().forEach((option, optionKey) => {
+				if (i === optionKey) {
+					option.name = `${this.NORMAL}[${this.CYAN}${option.name}${this.NORMAL}]${this.CYAN}`
+				}
+				console.log(`${this.CYAN}${option.name}`)
+			});
+			console.log(`${this.NORMAL}`)
+		}
+
+		const keyPressHandler = (char, key) => {
+			switch (key.name) {
+				case "up":
+					selectedOptionId = parseInt(selectedOptionId) > 0
+						? parseInt(selectedOptionId) - 1
+						: 0
+					renderOptions(selectedOptionId)
+					break;
+
+				case "down":
+					selectedOptionId = parseInt(selectedOptionId) < (optionsMap().length - 1)
+						? parseInt(selectedOptionId) + 1
+						: optionsMap().length - 1
+					renderOptions(selectedOptionId)
+					break;
+
+				case "return":
+					this.rl.input.off('keypress', keyPressHandler)
+					// get the input from the user// close readline
+					this.closeReadline()
+					self.menuResolver(optionsMap()[parseInt(selectedOptionId)].key);
+					break;
+			}
+		}
+
+		renderOptions(0)
+		this.startReadline()
+		this.rl.input.on('keypress', keyPressHandler)
+
+		return new Promise((resolve, reject) => {
+			self.menuResolver = resolve
+			keyPressHandler
+		});
+	}
+
+	/**
+	 * Displays a table to the user
+	 *
+	 * @param {{label: string, width: number}[]} columns
+	 * @param {object[]} rows
+	 * @param {number|null} selectedTask
+	 * @param {string|null} title
+	 * @param {string} colour
+	 */
+	showTable(columns = [], rows = [], selectedTask = null, title = null, colour = this.GREEN) {
+		new Table()
+			.setTitle(title)
+			.setColumns(columns)
+			.setSelectedRow(selectedTask)
+			.setRows(rows)
+			.setColour(colour)
+			.render()
+	}
+
+	/**
+	 * Displays a table to the user with selectable rows, returns a promise that resolves with the user's selection
+	 *
+	 * @param {string} question
+	 * @param {{label: string, width: number}[]} columns
+	 * @param {object[]} rows
+	 * @param {string} colour
+	 */
+	showTableMenu(question, columns, rows, colour = this.GREEN) {
+		// store the instance as self so we can access it within the promise
+		let self = this
+		let selectedRowId = 0
+		this.showTable(columns, rows, selectedRowId, question, colour)
+
+		const keyPressHandler = (char, key) => {
+			switch (key.name) {
+				case "up":
+					selectedRowId = selectedRowId > 0
+						? selectedRowId - 1
+						: 0
+					this.showTable(columns, rows, selectedRowId, question, colour)
+					break;
+
+				case "down":
+					selectedRowId = selectedRowId < (rows.length - 1)
+						? selectedRowId + 1
+						: rows.length - 1
+					this.showTable(columns, rows, selectedRowId, question, colour)
+					break;
+
+				case "return":
+					this.rl.input.off('keypress', keyPressHandler)
+					// get the input from the user// close readline
+					this.closeReadline()
+					self.menuResolver(selectedRowId);
+					break;
+			}
+		}
+		this.startReadline()
+		this.rl.input.on('keypress', keyPressHandler)
+
+		return new Promise((resolve, reject) => {
+			self.menuResolver = resolve
+			keyPressHandler
+		});
+	}
+
+	/**
+	 * Displays a yes/no menu to the user, returns a promise that resolves with the user's selection
+	 *
+	 * @param {string} question
+	 * @param {string} title
+	 * @param {string} colour
+	 */
+	showYesNoMenu(question, title = null, colour = this.GREEN) {
+		return this.showMenu(question, {
+			'y': 'Yes',
+			'n': 'No'
+		}, title, colour)
 	}
 
 }
