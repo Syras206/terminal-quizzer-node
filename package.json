@@ -1,6 +1,6 @@
 {
   "name": "terminal-quizzer",
-  "version": "1.0.1",
+  "version": "1.1.1",
   "description": "A promise based node package for outputting user prompt questions and quizzes within the console.",
   "main": "exports.js",
   "scripts": {
