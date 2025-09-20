@@ -1,14 +1,18 @@
 {
   "name": "terminal-quizzer",
-  "version": "1.1.1",
-  "description": "A promise based node package for outputting user prompt questions and quizzes within the console.",
-  "main": "exports.js",
+  "version": "2.0.2",
+  "description": "A promise-based Node.js package for creating beautiful, interactive command line interfaces with modern features and full backward compatibility.",
+  "main": "dist/exports.min.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test.js",
+    "demo": "node example.js",
+    "build": "node build.js",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://Syras206@github.com/Syras206/node-quizzer.git"
+    "url": "git+https://github.com/Syras206/node-quizzer.git"
   },
   "keywords": [
     "quiz",
@@ -16,12 +20,51 @@
     "promise",
     "prompt",
     "terminal",
-    "console"
+    "console",
+    "cli",
+    "interactive",
+    "modern",
+    "enhanced",
+    "multiselect",
+    "table",
+    "form",
+    "styling",
+    "theme",
+    "progress",
+    "spinner",
+    "validation",
+    "password",
+    "hidden-input",
+    "keypress",
+    "backward-compatible"
   ],
   "author": "Shane Coates",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Syras206/node-quizzer/issues"
   },
-  "homepage": "https://github.com/Syras206/node-quizzer#readme"
+  "homepage": "https://github.com/Syras206/node-quizzer#readme",
+  "dependencies": {
+    "chalk": "^4.1.2"
+  },
+  "peerDependencies": {
+    "chalk": "^4.0.0"
+  },
+  "devDependencies": {
+    "terser": "^5.31.6"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "files": [
+    "dist/*.js",
+    "dist/UI/*.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "require": "./dist/exports.min.js"
+    }
+  }
 }
