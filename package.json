@@ -1,6 +1,6 @@
 {
   "name": "terminal-quizzer",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "A promise-based Node.js package for creating beautiful, interactive command line interfaces with modern features and full backward compatibility.",
   "main": "dist/exports.min.js",
   "scripts": {
